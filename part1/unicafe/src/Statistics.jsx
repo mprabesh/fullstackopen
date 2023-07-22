@@ -11,7 +11,7 @@ const Statistics = ({ stats }) => {
       <StatisticLine text="neutral" value={stats.neutral} />
       <StatisticLine text="bad" value={stats.bad} />
       <StatisticLine text="average" value={averageVal} />
-      <StatisticLine text="all" value={calPositive} />
+      <StatisticLine text="all" value={String(calPositive) + "%"} />
     </div>
   );
 };
