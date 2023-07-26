@@ -20,7 +20,8 @@ const App = () => {
   const contactsToShow = persons.filter((value) => {
     return filterName.length === 0
       ? true
-      : value.name.toLowerCase() === filterName.toLowerCase();
+      : value.name.toLowerCase().includes(filterName.toLowerCase());
+    // : value.name.toLowerCase() === filterName.toLowerCase();
   });
 
   const handleSubmit = (e) => {
