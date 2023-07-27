@@ -12,10 +12,21 @@ const PersonForm = ({
         </div>
         <div>
           number:{" "}
-          <input value={newContact.number} onChange={handleNumberChange} />
+          <input
+            type="number"
+            value={newContact.number}
+            onChange={handleNumberChange}
+          />
         </div>
         <div>
-          <button onClick={handleSubmit}>add</button>
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+          >
+            add
+          </button>
         </div>
       </form>
     </>
