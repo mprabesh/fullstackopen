@@ -2,12 +2,17 @@ import { useState, useEffect } from "react";
 import Persons from "./components/Persons";
 import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 import { getAll, create, update } from "./services/contact";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newContact, setNewContact] = useState({ name: "", number: "" });
   const [filterName, setFilterName] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState({
+    message: "",
+    messageTypeError: false,
+  });
   // -->> to get all the list of contacts from the db at once
   useEffect(() => {
     getAll()
@@ -45,7 +50,13 @@ const App = () => {
             )
           )
         )
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err);
+          setNotificationMessage({
+            message: `Information on ${newContact.name} has already been moved from server.`,
+            messageTypeError: true,
+          });
+        });
     }
   };
   const handleSubmit = () => {
@@ -54,7 +65,16 @@ const App = () => {
           name: newContact.name,
           number: newContact.number,
         })
-          .then((response) => setPersons([...persons, response.data]))
+          .then((response) => {
+            setPersons([...persons, response.data]);
+            setNotificationMessage({
+              ...notificationMessage,
+              message: `Added ${newContact.name}`,
+            });
+            setTimeout(() => {
+              setNotificationMessage({ ...notificationMessage, message: "" });
+            }, 3000);
+          })
           .catch((err) => console.log(err.message))
       : updateNumberField(checkValues); // -->> if alrady in the db then just ask for update in number field
     setNewContact({ name: "", number: "" });
@@ -65,10 +85,13 @@ const App = () => {
   const handleNumberChange = (e) => {
     setNewContact({ ...newContact, number: e.target.value });
   };
-
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        notificationMessage={notificationMessage}
+        setNotificationMessage={setNotificationMessage}
+      />
       <Filter setFilterVal={setFilterVal} />
       <h2>add a new</h2>
       <PersonForm
@@ -78,7 +101,11 @@ const App = () => {
         newContact={newContact}
       />
       <h2>Numbers</h2>
-      <Persons contacts={contactsToShow} setPersons={setPersons} />
+      <Persons
+        contacts={contactsToShow}
+        setPersons={setPersons}
+        setNotificationMessage={setNotificationMessage}
+      />
     </div>
   );
 };

@@ -1,13 +1,19 @@
 import { deleteOne } from "../services/contact";
 
-const Persons = ({ contacts, setPersons }) => {
+const Persons = ({ contacts, setPersons, setNotificationMessage }) => {
   const deleteRecord = (val) => {
     deleteOne(val)
       .then(() => {
         const item = contacts.filter((value) => value.id !== val);
         setPersons(item);
+        setNotificationMessage({
+          message: `Deleted.`,
+          messageTypeError: false,
+        });
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <>
