@@ -1,34 +1,15 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
-
-const CountryComponent = ({ name, capital, area, languages, flags }) => {
-  return (
-    <div>
-      <h1>{name}</h1>
-      <p>capital {capital}</p>
-      <p>area {area}</p>
-      <div style={{ marginBottom: "20px" }}>
-        <h3>languages:</h3>
-        <ul>
-          {languages
-            ? Object.values(languages).map((val) => <li key={val}>{val}</li>)
-            : null}
-        </ul>
-      </div>
-      <div>
-        <img src={flags} alt="flag" />
-      </div>
-    </div>
-  );
-};
+import { CountryComponent } from "./Country";
+import { getAllCountries } from "./services/countries";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [displayCountryInfo, setDisplayCountryInfo] = useState(false);
+  const [countryInfo, setCountryInfo] = useState([]);
 
   useEffect(() => {
-    axios
-      .get(`https://studies.cs.helsinki.fi/restcountries/api/all`)
+    getAllCountries()
       .then((response) => setCountries(response.data))
       .catch((err) => {
         console.log(err);
@@ -36,35 +17,56 @@ const App = () => {
   }, []);
 
   const handleChange = (e) => {
+    displayCountryInfo
+      ? setDisplayCountryInfo(!displayCountryInfo)
+      : setDisplayCountryInfo(displayCountryInfo);
     setSearchTerm(e.target.value);
+  };
+  const showCountryInfo = (data) => {
+    setCountryInfo(data);
   };
   const countriesToShow = countries.filter((val) => {
     return searchTerm.length === 0
       ? true
       : val.name.common.toLowerCase().includes(searchTerm.toLowerCase());
   });
+
   return (
     <div>
       <div>
         find countries <input onChange={handleChange} />
       </div>
-
-      <div>
-        {countriesToShow.length < 10 ? (
-          countriesToShow.map((data) => (
-            <CountryComponent
-              key={data.name.common}
-              name={data.name.common}
-              capital={data.capital}
-              area={data.area}
-              languages={data.languages}
-              flags={data.flags.png}
-            />
-          ))
-        ) : (
-          <p>Too many matches,specify another filter</p>
-        )}
-      </div>
+      {displayCountryInfo ? (
+        <CountryComponent
+          key={countryInfo.name.common}
+          name={countryInfo.name.common}
+          capital={countryInfo.capital}
+          area={countryInfo.area}
+          languages={countryInfo.languages}
+          flags={countryInfo.flags.png}
+        />
+      ) : (
+        <div>
+          {countriesToShow.length < 10 ? (
+            countriesToShow.map((data) => (
+              <p key={data.name.common}>
+                {data.name.common}{" "}
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setDisplayCountryInfo(true);
+                    showCountryInfo(data);
+                  }}
+                >
+                  show
+                </button>
+              </p>
+            ))
+          ) : (
+            <p>Too many matches,specify another filter</p>
+          )}
+        </div>
+      )}
     </div>
   );
 };
