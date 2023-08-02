@@ -1,15 +1,18 @@
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
+const cors = require("cors");
 
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
 
-const PORT = 3001;
+const PORT = process.env.PORT ? process.env.PORT : 8080;
 
 app.use(express.json());
+app.use(cors());
+app.use(express.static("dist"));
 
 let persons = [
   {
@@ -35,7 +38,7 @@ let persons = [
 ];
 
 app.get("/", (req, res) => {
-  res.send("<h1>Hello World</h1>");
+  res.send("<h1>This is phonebook app.</h1>");
 });
 
 app.get("/api/persons", (req, res) => {
