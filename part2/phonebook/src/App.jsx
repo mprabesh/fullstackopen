@@ -53,7 +53,7 @@ const App = () => {
           );
           setNotificationMessage({
             ...notificationMessage,
-            message: `Updated ${response.name}`,
+            message: `Updated ${updateObj.name}`,
           });
           setTimeout(() => {
             setNotificationMessage({ ...notificationMessage, message: "" });
