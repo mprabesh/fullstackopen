@@ -13,7 +13,7 @@ mongoose
 
 const phonebookSchema = new mongoose.Schema({
   name: String,
-  number: Number,
+  number: String,
 });
 
 phonebookSchema.set("toJSON", {
