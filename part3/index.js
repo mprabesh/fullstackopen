@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const cors = require("cors");
+const Phonebook = require("./models/phonebook");
+require("dotenv").config();
 
 morgan.token("body", (req, res) => JSON.stringify(req.body));
 app.use(
@@ -14,73 +16,86 @@ app.use(express.json());
 app.use(cors());
 app.use(express.static("dist"));
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 app.get("/", (req, res) => {
   res.send("<h1>This is phonebook app.</h1>");
 });
 
 app.get("/api/persons", (req, res) => {
-  res.status(200).json(persons);
+  Phonebook.find({})
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(400).json(err);
+    });
 });
 app.get("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const data = persons.find((val) => val.id === id);
-  if (data) {
-    res.status(200).json(data);
-  } else {
-    res.status(404).send("The given data is not found.");
-  }
+  const myId = req.params.id;
+  Phonebook.findById(myId)
+    .then((result) => {
+      if (result) {
+        res.status(200).json(result);
+      } else {
+        res.status(404).json({ error: "requested data not found!" });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({ error: err.name });
+    });
 });
 app.get("/info", (req, res) => {
-  const len = persons.length;
-  const date = new Date();
-  res
-    .status(200)
-    .send(`<p>Phonebook has info for ${len} people<br />${date}</p>`);
+  Phonebook.count().then((result) => {
+    const date = new Date();
+    res
+      .status(200)
+      .send(`<p>Phonebook has info for ${result} people<br />${date}</p>`);
+  });
 });
 
 app.post("/api/persons", (req, res) => {
   const newObj = req.body;
-  const alreadyIncludes = persons.find((val) => val.name === newObj.name);
-  if (alreadyIncludes) {
-    res.status(403).json({ error: "name must be unique" });
-  } else {
-    if (newObj.name && newObj.number) {
-      newObj.id = Math.floor(Math.random() * 20);
-      persons.push(newObj);
-      res.status(200).json(newObj);
+  Phonebook.findOne({ name: newObj.name }).then((result) => {
+    if (result) {
+      res.status(403).json({ error: "name must be unique" });
     } else {
-      res.status(400).json({ error: "Missing  name or number" });
+      if (newObj.name && newObj.number) {
+        const contact = new Phonebook(newObj);
+        contact
+          .save()
+          .then((result) => {
+            res.status(200).json(result);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        res.status(400).json({ error: "Missing content" });
+      }
     }
-  }
+  });
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((val) => val.id !== id);
-  res.status(204).send("Deletetion successful");
+  const myId = req.params.id;
+  Phonebook.findByIdAndDelete(myId)
+    .then((result) => {
+      console.log(result);
+      res.status(204).send("Deletetion successful");
+    })
+    .catch((err) => console.log(err, "xxx"));
+});
+
+app.put("/api/persons/:id", (req, res) => {
+  const myId = req.params.id;
+  const updateData = req.body;
+  Phonebook.findByIdAndUpdate(myId, updateData)
+    .then((result) => {
+      res.status(200).json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 });
 
 app.listen(PORT, () => {

@@ -1,5 +1,3 @@
-const { connection } = require("mongoose");
-
 const mongoose = require("mongoose");
 
 if (process.argv.length < 3) {
