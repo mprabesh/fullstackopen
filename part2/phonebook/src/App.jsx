@@ -43,13 +43,22 @@ const App = () => {
       const updatedContact = { ...updateObj, number: newContact.number };
       const updatePromise = update(updateObj.id, updatedContact);
       updatePromise
-        .then((response) =>
+        .then((response) => {
           setPersons(
             persons.map((val) =>
-              val.id !== updateObj.id ? val : response.data
+              val.id !== updateObj.id
+                ? val
+                : { ...val, number: newContact.number }
             )
-          )
-        )
+          );
+          setNotificationMessage({
+            ...notificationMessage,
+            message: `Updated ${response.name}`,
+          });
+          setTimeout(() => {
+            setNotificationMessage({ ...notificationMessage, message: "" });
+          }, 3000);
+        })
         .catch((err) => {
           console.log(err);
           setNotificationMessage({
@@ -92,6 +101,7 @@ const App = () => {
         notificationMessage={notificationMessage}
         setNotificationMessage={setNotificationMessage}
       />
+
       <Filter setFilterVal={setFilterVal} />
       <h2>add a new</h2>
       <PersonForm

@@ -1,5 +1,9 @@
 const Notification = ({ notificationMessage }) => {
-  return notificationMessage.message ? (
+  const notifyMessage = notificationMessage;
+  setTimeout(() => {
+    notifyMessage.message = "";
+  }, 3000);
+  return notifyMessage.message ? (
     <div
       className={
         notificationMessage.messageTypeError
@@ -7,7 +11,7 @@ const Notification = ({ notificationMessage }) => {
           : "greenClassMessage"
       }
     >
-      {notificationMessage.message}
+      {notifyMessage.message}
     </div>
   ) : null;
 };

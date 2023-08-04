@@ -10,6 +10,12 @@ const Persons = ({ contacts, setPersons, setNotificationMessage }) => {
           message: `Deleted.`,
           messageTypeError: false,
         });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
       })
       .catch((err) => {
         console.log(err);
