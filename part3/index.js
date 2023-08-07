@@ -101,6 +101,16 @@ app.put("/api/persons/:id", (req, res, next) => {
     });
 });
 
+<<<<<<< HEAD
+=======
+const errorHandler = (error, req, res, next) => {
+  if (error.name === "ValidationError") {
+    res.status(400).json({ error: error.message });
+  }
+};
+app.use(errorHandler);
+
+>>>>>>> main
 app.listen(PORT, () => {
   console.log(`Listening to port ${PORT}`);
 });
