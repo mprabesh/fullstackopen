@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseURL = import.meta.env.DEV ? "/persons" : "/api/persons";
+const baseURL = "/api/persons";
 
 export const getAll = () => {
   return axios.get(baseURL);

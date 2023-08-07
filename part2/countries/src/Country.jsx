@@ -15,7 +15,7 @@ export const CountryComponent = ({ name, capital, area, languages, flags }) => {
         weatherIcon: response.data.weather[0].icon,
       });
     });
-  }, []);
+  }, [capital]);
 
   return (
     <div>

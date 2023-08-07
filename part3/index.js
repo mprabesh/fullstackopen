@@ -5,12 +5,12 @@ const cors = require("cors");
 const Phonebook = require("./models/phonebook");
 require("dotenv").config();
 
-morgan.token("body", (req, res) => JSON.stringify(req.body));
-app.use(
-  morgan(":method :url :status :res[content-length] - :response-time ms :body")
-);
+// morgan.token("body", (req, res) => JSON.stringify(req.body));
+// app.use(
+//   morgan(":method :url :status :res[content-length] - :response-time ms :body")
+// );
 
-const PORT = process.env.PORT ? process.env.PORT : 8080;
+const PORT = process.env.PORT ? process.env.PORT : 3001;
 
 app.use(express.json());
 app.use(cors());
@@ -60,7 +60,6 @@ app.post("/api/persons", (req, res, next) => {
       res.status(403).json({ error: "name must be unique" });
     } else {
       if (newObj.name && newObj.number) {
-        console.log("apple");
         const contact = new Phonebook(newObj);
         contact
           .save()
@@ -68,10 +67,10 @@ app.post("/api/persons", (req, res, next) => {
             res.status(200).json(result);
           })
           .catch((err) => {
-            next(err);
+            console.log(err);
           });
       } else {
-        res.status(400).json({ message: "Missing content" });
+        res.status(400).json({ error: "Missing content" });
       }
     }
   });
@@ -81,37 +80,26 @@ app.delete("/api/persons/:id", (req, res, next) => {
   const myId = req.params.id;
   Phonebook.findByIdAndDelete(myId)
     .then((result) => {
-      console.log(result);
       res.status(204).send("Deletetion successful");
     })
     .catch((err) => next(err));
 });
 
-app.put("/api/persons/:id", (req, res) => {
+app.put("/api/persons/:id", (req, res, next) => {
   const myId = req.params.id;
   const updateData = req.body;
-  Phonebook.findByIdAndUpdate(myId, updateData)
+
+  Phonebook.findByIdAndUpdate(myId, updateData, {
+    new: true,
+    runValidators: true,
+  })
     .then((result) => {
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 });
-
-const unknownEndPoint = (req, res) => {
-  res.status(404).send({ error: "unknown endpoint" });
-};
-
-app.use(unknownEndPoint);
-
-const errrorHandler = (error, req, res, next) => {
-  if (error.name === "CastError") {
-    return res.status(400).send({ error: "malformatted id" });
-  }
-};
-
-app.use(errrorHandler);
 
 app.listen(PORT, () => {
   console.log(`Listening to port ${PORT}`);
