@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("<h1>This is phonebook app.</h1>");
 });
 
-app.get("/api/persons", (req, res, next) => {
+app.get("/api/persons", (req, res) => {
   Phonebook.find({})
     .then((result) => {
       res.status(200).json(result);
@@ -75,11 +75,10 @@ app.post("/api/persons", (req, res, next) => {
     }
   });
 });
-
 app.delete("/api/persons/:id", (req, res, next) => {
   const myId = req.params.id;
   Phonebook.findByIdAndDelete(myId)
-    .then((result) => {
+    .then(() => {
       res.status(204).send("Deletetion successful");
     })
     .catch((err) => next(err));
@@ -106,6 +105,7 @@ const errorHandler = (error, req, res, next) => {
   if (error.name === "ValidationError") {
     res.status(400).json({ error: error.message });
   }
+  next();
 };
 app.use(errorHandler);
 

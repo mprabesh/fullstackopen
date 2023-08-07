@@ -8,7 +8,7 @@ mongoose.set("strictQuery", false);
 console.log("Connecting to URL", url);
 mongoose
   .connect(url)
-  .then((result) => console.log("connected to mongo server"))
+  .then(() => console.log("connected to mongo server"))
   .catch((err) => console.log(err));
 
 const phonebookSchema = new mongoose.Schema({
