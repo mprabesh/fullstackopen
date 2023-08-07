@@ -20,17 +20,16 @@ app.get("/", (req, res) => {
   res.send("<h1>This is phonebook app.</h1>");
 });
 
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
   Phonebook.find({})
     .then((result) => {
       res.status(200).json(result);
     })
     .catch((err) => {
-      console.log(err);
-      res.status(400).json(err);
+      next(err);
     });
 });
-app.get("/api/persons/:id", (req, res) => {
+app.get("/api/persons/:id", (req, res, next) => {
   const myId = req.params.id;
   Phonebook.findById(myId)
     .then((result) => {
@@ -41,7 +40,7 @@ app.get("/api/persons/:id", (req, res) => {
       }
     })
     .catch((err) => {
-      res.status(500).json({ error: err.name });
+      next(err);
     });
 });
 app.get("/info", (req, res) => {
@@ -55,24 +54,29 @@ app.get("/info", (req, res) => {
 
 app.post("/api/persons", (req, res, next) => {
   const newObj = req.body;
+  console.log(newObj);
   Phonebook.findOne({ name: newObj.name }).then((result) => {
     if (result) {
       res.status(403).json({ error: "name must be unique" });
     } else {
-      const contact = new Phonebook(newObj);
-      contact
-        .save()
-        .then((result) => {
-          res.status(200).json(result);
-        })
-        .catch((err) => {
-          next(err);
-        });
+      if (newObj.name && newObj.number) {
+        const contact = new Phonebook(newObj);
+        contact
+          .save()
+          .then((result) => {
+            res.status(200).json(result);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        res.status(400).json({ error: "Missing content" });
+      }
     }
   });
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   const myId = req.params.id;
   Phonebook.findByIdAndDelete(myId)
     .then((result) => {
@@ -98,6 +102,7 @@ app.put("/api/persons/:id", (req, res, next) => {
 });
 
 const errorHandler = (error, req, res, next) => {
+  console.log(error.name);
   if (error.name === "ValidationError") {
     res.status(400).json({ error: error.message });
   }
