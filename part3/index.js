@@ -98,7 +98,6 @@ app.put("/api/persons/:id", (req, res, next) => {
 });
 
 const errorHandler = (error, req, res, next) => {
-  console.log(error.name);
   if (error.name === "ValidationError") {
     res.status(400).json({ error: error.message });
   }
