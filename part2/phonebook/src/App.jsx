@@ -17,7 +17,9 @@ const App = () => {
   useEffect(() => {
     getAll()
       .then((response) => setPersons(response.data))
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
   // -->> To check if the contact is already in the db.
   const checkValues = persons.find(
@@ -43,7 +45,7 @@ const App = () => {
       const updatedContact = { ...updateObj, number: newContact.number };
       const updatePromise = update(updateObj.id, updatedContact);
       updatePromise
-        .then((response) => {
+        .then(() => {
           setPersons(
             persons.map((val) =>
               val.id !== updateObj.id
@@ -56,15 +58,18 @@ const App = () => {
             message: `Updated ${updateObj.name}`,
           });
           setTimeout(() => {
-            setNotificationMessage({ ...notificationMessage, message: "" });
+            setNotificationMessage({ messageTypeError: false, message: "" });
           }, 3000);
         })
         .catch((err) => {
           console.log(err);
           setNotificationMessage({
-            message: `Information on ${newContact.name} has already been moved from server.`,
+            message: err.response.data.error,
             messageTypeError: true,
           });
+          setTimeout(() => {
+            setNotificationMessage({ messageTypeError: false, message: "" });
+          }, 3000);
         });
     }
   };
@@ -77,14 +82,26 @@ const App = () => {
           .then((response) => {
             setPersons([...persons, response.data]);
             setNotificationMessage({
-              ...notificationMessage,
+              messageTypeError: false,
               message: `Added ${newContact.name}`,
             });
             setTimeout(() => {
-              setNotificationMessage({ ...notificationMessage, message: "" });
+              setNotificationMessage({ messageTypeError: false, message: "" });
             }, 3000);
           })
-          .catch((err) => console.log(err.message))
+          .catch((err) => {
+            console.dir(err.response.data.error);
+            setNotificationMessage({
+              message: err.response.data.error,
+              messageTypeError: true,
+            });
+            setTimeout(() => {
+              setNotificationMessage({
+                message: "",
+                messageTypeError: false,
+              });
+            }, 3000);
+          })
       : updateNumberField(checkValues); // -->> if alrady in the db then just ask for update in number field
     setNewContact({ name: "", number: "" });
   };

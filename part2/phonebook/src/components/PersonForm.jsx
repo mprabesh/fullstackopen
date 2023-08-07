@@ -12,11 +12,7 @@ const PersonForm = ({
         </div>
         <div>
           number:{" "}
-          <input
-            type="number"
-            value={newContact.number}
-            onChange={handleNumberChange}
-          />
+          <input value={newContact.number} onChange={handleNumberChange} />
         </div>
         <div>
           <button
