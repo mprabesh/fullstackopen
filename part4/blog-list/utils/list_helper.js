@@ -20,8 +20,23 @@ const favoriteBlog = (blogs) => {
   return { author: favBlog.author, title: favBlog.title, likes: favBlog.likes };
 };
 
+const mostBlogs = (blogs) => {
+  const tempObj = blogs.reduce((acc, currVal) => {
+    Object.hasOwn(acc, currVal.author)
+      ? (acc[currVal.author] += 1)
+      : (acc[currVal.author] = 1);
+    return acc;
+  }, {});
+  const maxBlog = Math.max(...Object.values(tempObj));
+  const maxBlogAuthor = Object.keys(tempObj).find(
+    (key) => tempObj[key] === maxBlog
+  );
+  return { author: maxBlogAuthor, blogs: maxBlog };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
+  mostBlogs,
 };
