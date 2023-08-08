@@ -34,9 +34,24 @@ const mostBlogs = (blogs) => {
   return { author: maxBlogAuthor, blogs: maxBlog };
 };
 
+const mostLikes = (blogs) => {
+  const tempObj = blogs.reduce((acc, currVal) => {
+    Object.hasOwn(acc, currVal.author)
+      ? (acc[currVal.author] += currVal.likes)
+      : (acc[currVal.author] = currVal.likes);
+    return acc;
+  }, {});
+  const maxLikes = Math.max(...Object.values(tempObj));
+  const maxLikedAuthor = Object.keys(tempObj).find(
+    (key) => tempObj[key] === maxLikes
+  );
+  return { author: maxLikedAuthor, likes: maxLikes };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };
