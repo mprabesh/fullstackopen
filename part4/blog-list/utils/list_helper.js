@@ -9,7 +9,6 @@ const totalLikes = (blogs) => {
   const sumOfLikes = blogs.reduce((accumulator, currVal) => {
     return (accumulator += currVal.likes);
   }, 0);
-
   return sumOfLikes;
 };
 
