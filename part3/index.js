@@ -67,7 +67,7 @@ app.post("/api/persons", (req, res, next) => {
             res.status(200).json(result);
           })
           .catch((err) => {
-            console.log(err);
+            next(err);
           });
       } else {
         res.status(400).json({ error: "Missing content" });
