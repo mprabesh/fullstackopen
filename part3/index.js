@@ -5,10 +5,10 @@ const cors = require("cors");
 const Phonebook = require("./models/phonebook");
 require("dotenv").config();
 
-// morgan.token("body", (req, res) => JSON.stringify(req.body));
-// app.use(
-//   morgan(":method :url :status :res[content-length] - :response-time ms :body")
-// );
+morgan.token("body", (req, res) => JSON.stringify(req.body));
+app.use(
+  morgan(":method :url :status :res[content-length] - :response-time ms :body")
+);
 
 const PORT = process.env.PORT ? process.env.PORT : 3001;
 
@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.send("<h1>This is phonebook app.</h1>");
 });
 
-app.get("/api/persons", (req, res) => {
+app.get("/api/persons", (req, res, next) => {
   Phonebook.find({})
     .then((result) => {
       res.status(200).json(result);
