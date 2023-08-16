@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const supertest = require("supertest");
+const { blogsInDb } = require("./helper_func");
 const app = require("../app");
 const Blog = require("../models/blogs");
 const api = supertest(app);
@@ -53,7 +54,6 @@ describe("GET request tests", () => {
       .expect(200)
       .expect("Content-Type", /application\/json/);
   });
-
   test("to get the correct number of blog", async () => {
     const response = await api.get("/api/blogs");
     expect(response.body.length).toBe(2);
@@ -92,14 +92,16 @@ describe("POST request tests", () => {
 
 describe("DELETE test for blogs", () => {
   test("DELETE test responses statuscode 200", async () => {
-    const response = await api.get("/api/blogs");
-    const Id = response.body[0].id;
+    // const response = await api.get("/api/blogs");
+    const data = await blogsInDb();
+    const Id = data[0].id;
     await api.delete(`/api/blogs/${Id}`).expect(200);
   });
 
   test("count of blogs decreases by one after deletion", async () => {
-    const response = await api.get("/api/blogs");
-    const Id = response.body[0].id;
+    // const response = await api.get("/api/blogs");
+    const data = await blogsInDb();
+    const Id = data[0].id;
     await api.delete(`/api/blogs/${Id}`);
     const afterDeletion = await api.get("/api/blogs");
     expect(afterDeletion.body.length).toBe(1);
@@ -108,13 +110,16 @@ describe("DELETE test for blogs", () => {
 
 describe("UPDATE test for blogs", () => {
   test("UPDATE route responses with 200 OK status code", async () => {
-    const response = await api.get("/api/blogs");
-    const Id = response.body[0].id;
+    // const response = await api.get("/api/blogs");
+    const data = await blogsInDb();
+    console.log(data);
+    const Id = data[0].id;
     await api.put(`/api/blogs/${Id}`).send({ likes: 999 }).expect(200);
   });
   test("UPDATE likes responses updated value", async () => {
-    const response = await api.get("/api/blogs");
-    const Id = response.body[0].id;
+    // const response = await api.get("/api/blogs");
+    const data = await blogsInDb();
+    const Id = data[0].id;
     await api.put(`/api/blogs/${Id}`).send({ likes: 999 });
     const result = await api.get(`/api/blogs/${Id}`);
     const updatedLikes = result.body.likes;

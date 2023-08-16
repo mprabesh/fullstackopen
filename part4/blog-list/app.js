@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const { info } = require("./utils/logger");
 const blogsController = require("./controllers/blogs");
+const userController = require("./controllers/user");
+const loginController = require("./controllers/login");
 const { mongoURL } = require("./utils/config");
 const {
   errorHandler,
@@ -24,7 +26,8 @@ mongoose
   .catch((err) => info(err));
 
 app.use(requestLogger);
-
+app.use("/api/login", loginController);
+app.use("/api/users", userController);
 app.use("/api/blogs", blogsController);
 
 app.use(unknownEndpoint);

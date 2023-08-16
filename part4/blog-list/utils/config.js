@@ -6,4 +6,6 @@ const mongoURL =
     : process.env.TEST_MONGO_URL;
 const PORT = process.env.PORT;
 
-module.exports = { mongoURL, PORT };
+const SECRET_KEY = process.env.SECRET_KEY;
+
+module.exports = { mongoURL, PORT, SECRET_KEY };
