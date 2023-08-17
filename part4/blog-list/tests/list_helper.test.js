@@ -75,6 +75,12 @@ describe("total likes", () => {
     expect(result).toBe(5);
   });
 
+  test("When the blog list is empty", () => {
+    const emptyBlogs = [];
+    const result = listHelper.totalLikes(emptyBlogs);
+    expect(result).toBe(0);
+  });
+
   test("when list has multiple blogs, equals to the sum of likes of all blogs", () => {
     const result = listHelper.totalLikes(blogs);
     expect(result).toBe(36);
