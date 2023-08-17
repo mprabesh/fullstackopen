@@ -2,54 +2,23 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 const Blog = require("../models/blogs");
-const User = require("../models/user");
 const api = supertest(app);
-const bcrypt = require("bcrypt");
-const { blogsInDb } = require("./helper_func");
+const { blogsInDb, initialTestFunc } = require("./helper_func");
+const {
+  fakeToken,
+  invalidToken,
+  missingAuthor,
+  missingTitle,
+  newBlogPostWithNoLikes,
+  newBlogPost,
+  newBlogPost2,
+} = require("./dummyTestData");
 
-const newBlogPost = {
-  title: "Photography",
-  author: "Vladmir",
-  url: "http://picblog.com",
-  likes: "12300",
-};
-const newBlogPost2 = {
-  title: "this is fake blog",
-  author: "fake person",
-  url: "http://fakesite.com",
-  likes: "12300",
-};
-
-let newBlogPostWithNoLikes = {
-  title: "How to invest Smartly",
-  author: "Roald Dahl",
-  url: "http://investtoblog.com",
-};
 let token, testUserId;
-const newUser = {
-  username: "prabesh123",
-  name: "Prabesh Magar",
-  password: "password",
-};
-let fakeToken =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hZ2FycDA3MjMiLCJ1c2VySWQiOiI2NGRjOTc0YTc2YWViZjEzYmExMmRlYWEiLCJpYXQiOjE2OTIxODU5NTh9.bBKOUUj_9B3CLhUjnmpZsbbEiu_aQHzywZS_7zLwXFU";
-let invalidToken =
-  "eyJhbGciOiJthisisinvalidtokenIkpXVCJ9.eyJ1ththisisinvalidtokenE2OTIxODU5NTh9.bBKOUUjthisisinvalidtoken_7zLwXFU";
 beforeEach(async () => {
-  await User.deleteMany({});
-  await Blog.deleteMany({});
-  const passwordHash = await bcrypt.hash(newUser.password, 10);
-  const myUser = new User({
-    username: newUser.username,
-    name: newUser.name,
-    passwordHash,
-  });
-  const testUser = await myUser.save();
-  testUserId = testUser._id.toString();
-  const result = await api
-    .post("/api/login")
-    .send({ username: newUser.username, password: newUser.password });
-  token = result.body.token;
+  const initVariable = await initialTestFunc();
+  token = initVariable.token;
+  testUserId = initVariable.testUserId;
 });
 
 describe("adding a new blog", () => {
@@ -101,6 +70,23 @@ describe("GET request tests", () => {
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
+  });
+
+  test("verify missing title || author results status code 400", async () => {
+    const newBlog = new Blog(missingTitle);
+    const response = await api
+      .post("/api/blogs")
+      .set("authorization", `Bearer ${token}`)
+      .send({ ...newBlog, user: testUserId });
+    expect(response.status).toBe(400);
+
+    const newBlog1 = new Blog(missingAuthor);
+    const response1 = await api
+      .post("/api/blogs")
+      .set("authorization", `Bearer ${token}`)
+      .send({ ...newBlog1, user: testUserId });
+
+    expect(response1.status).toBe(400);
   });
 
   // test for the excercise 4.8
