@@ -12,12 +12,6 @@ let blogs = [
     url: "http://picblog.com",
     likes: "12300",
   },
-  {
-    title: "How to cook better ?",
-    author: "Jasprit Singh Sangha",
-    url: "http://foodblog.com",
-    likes: "890",
-  },
 ];
 let newBlogPost = {
   title: "Making china pots",
@@ -42,8 +36,6 @@ let missingData = {
 beforeEach(async () => {
   await Blog.deleteMany({});
   let blogObj = new Blog(blogs[0]);
-  await blogObj.save();
-  blogObj = new Blog(blogs[1]);
   await blogObj.save();
 });
 
