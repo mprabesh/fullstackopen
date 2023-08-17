@@ -8,7 +8,6 @@ loginRoute.post("/", async (req, res, next) => {
   const { username, password } = req.body;
   try {
     const user = await BlogUser.findOne({ username });
-    console.log(user);
     const passwordCorrect =
       user === null ? false : await bcrypt.compare(password, user.passwordHash);
     if (!(passwordCorrect && user)) {
