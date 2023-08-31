@@ -41,7 +41,7 @@ describe("when there is one user initially in the db", () => {
     const result = await api.post("/api/users").send(newUser);
     expect(result.status).toBe(400);
     expect(result.body.error).toBe(
-      "Bloguser validation failed: username: Path `username` (`ap`) is shorter than the minimum allowed length (3)."
+      "User validation failed: username: Path `username` (`ap`) is shorter than the minimum allowed length (3)."
     );
   });
   test("unique username is maintained in db", async () => {
@@ -61,7 +61,7 @@ describe("when there is one user initially in the db", () => {
     const result = await api.post("/api/users").send(newUser);
     expect(result.status).toBe(400);
     expect(result.body.error).toBe(
-      "Bloguser validation failed: username: Path `username` is required."
+      "User validation failed: username: Path `username` is required."
     );
   });
   test("empty password is invalid", async () => {

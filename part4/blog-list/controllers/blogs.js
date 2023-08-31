@@ -26,17 +26,15 @@ blogRoute.get("/:id", async (req, res, next) => {
 });
 
 blogRoute.post("/", tokenExtractor, userExtractor, async (req, res, next) => {
-  const { user } = req.body;
   const tokenUser = req.user;
-  if (user !== tokenUser) {
-    return res.status(401).json({ error: "token mismatch" });
-  }
   if (!Object.keys(req.body).includes("likes")) {
     req.body["likes"] = 0;
   }
   try {
-    const userFromDb = await User.findById(req.body.user);
-    const newBlog = new Blog({ ...req.body, user: userFromDb._id });
+    const userFromDb = await User.findById(tokenUser);
+
+    const newBlog = new Blog({ ...req.body, user: tokenUser });
+
     const result = await newBlog.save();
     res.status(200).json(result);
     userFromDb.blogs = userFromDb.blogs.concat(result.id);

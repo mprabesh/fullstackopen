@@ -45,7 +45,7 @@ describe("adding a new blog", () => {
       .send({ ...newBlogPost, user: testUserId })
       .expect(401);
   });
-  test("fails if decoded userid and requesting user does not matches", async () => {
+  test("fails if decoded userid and requesting user does not match", async () => {
     await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${fakeToken}`)
@@ -62,6 +62,22 @@ describe("validation testing for blogs", () => {
       .send({ ...newBlogPostWithNoLikes, user: testUserId });
     expect(response.body.likes).toBe(0);
   });
+  test("verify missing title results status code 400", async () => {
+    const newBlog = new Blog(missingTitle);
+    const response = await api
+      .post("/api/blogs")
+      .set("authorization", `Bearer ${token}`)
+      .send({ ...newBlog, user: testUserId });
+    expect(response.status).toBe(400);
+  });
+  test("verify missing author results status code 400", async () => {
+    const newBlog = new Blog(missingAuthor);
+    const response = await api
+      .post("/api/blogs")
+      .set("authorization", `Bearer ${token}`)
+      .send({ ...newBlog, user: testUserId });
+    expect(response.status).toBe(400);
+  });
 });
 
 describe("GET request tests", () => {
@@ -70,23 +86,6 @@ describe("GET request tests", () => {
       .get("/api/blogs")
       .expect(200)
       .expect("Content-Type", /application\/json/);
-  });
-
-  test("verify missing title || author results status code 400", async () => {
-    const newBlog = new Blog(missingTitle);
-    const response = await api
-      .post("/api/blogs")
-      .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlog, user: testUserId });
-    expect(response.status).toBe(400);
-
-    const newBlog1 = new Blog(missingAuthor);
-    const response1 = await api
-      .post("/api/blogs")
-      .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlog1, user: testUserId });
-
-    expect(response1.status).toBe(400);
   });
 
   // test for the excercise 4.8
