@@ -66,12 +66,21 @@ blogRoute.delete(
   }
 );
 
-blogRoute.put("/:id", async (req, res, next) => {
+blogRoute.put("/:id", tokenExtractor, userExtractor, async (req, res, next) => {
   const myId = req.params.id;
+  console.log("apple and oranges");
   const myUpdatedObj = req.body;
+  const tokenUser = req.user;
   try {
-    const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj);
-    res.status(200).json(response);
+    const postAuthor = await Blog.findById(myId);
+    const updateAuthorized =
+      JSON.stringify(postAuthor.user) === JSON.stringify(tokenUser);
+    if (updateAuthorized) {
+      const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj);
+      res.status(200).json(response);
+    } else {
+      res.status(401).json({ error: "Unauthorized update" });
+    }
   } catch (err) {
     next(err);
   }
