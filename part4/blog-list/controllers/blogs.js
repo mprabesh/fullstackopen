@@ -68,7 +68,6 @@ blogRoute.delete(
 
 blogRoute.put("/:id", tokenExtractor, userExtractor, async (req, res, next) => {
   const myId = req.params.id;
-  console.log("apple and oranges");
   const myUpdatedObj = req.body;
   const tokenUser = req.user;
   try {
