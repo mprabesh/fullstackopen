@@ -10,6 +10,12 @@ const newBlogPost2 = {
   url: "http://fakesite.com",
   likes: "12300",
 };
+const newBlogPost3 = {
+  title: "this is first blog",
+  author: "first test author",
+  url: "http://fakesite.com",
+  likes: "101",
+};
 
 let newBlogPostWithNoLikes = {
   title: "How to invest Smartly",
@@ -47,5 +53,6 @@ module.exports = {
   newBlogPostWithNoLikes,
   newBlogPost,
   newBlogPost2,
+  newBlogPost3,
   newUser,
 };

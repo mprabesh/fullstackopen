@@ -5,7 +5,6 @@ const Blog = require("../models/blogs");
 const api = supertest(app);
 const { blogsInDb, initialTestFunc } = require("./helper_func");
 const {
-  fakeToken,
   invalidToken,
   missingAuthor,
   missingTitle,
@@ -14,11 +13,11 @@ const {
   newBlogPost2,
 } = require("./dummyTestData");
 
-let token, testUserId;
+let token, firstBlog;
 beforeEach(async () => {
   const initVariable = await initialTestFunc();
   token = initVariable.token;
-  testUserId = initVariable.testUserId;
+  firstBlog = initVariable.newBlogId._id.toString();
 });
 
 describe("adding a new blog", () => {
@@ -27,7 +26,7 @@ describe("adding a new blog", () => {
     const response = await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlogPost, user: testUserId });
+      .send(newBlogPost);
     expect(response.status).toBe(200);
     //after adding new blog
     let finalBlogList = await blogsInDb();
@@ -42,14 +41,7 @@ describe("adding a new blog", () => {
     await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${invalidToken}`)
-      .send({ ...newBlogPost, user: testUserId })
-      .expect(401);
-  });
-  test("fails if decoded userid and requesting user does not match", async () => {
-    await api
-      .post("/api/blogs")
-      .set("authorization", `Bearer ${fakeToken}`)
-      .send({ ...newBlogPost, user: testUserId })
+      .send(newBlogPost)
       .expect(401);
   });
 });
@@ -59,7 +51,7 @@ describe("validation testing for blogs", () => {
     const response = await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlogPostWithNoLikes, user: testUserId });
+      .send(newBlogPostWithNoLikes);
     expect(response.body.likes).toBe(0);
   });
   test("verify missing title results status code 400", async () => {
@@ -67,7 +59,7 @@ describe("validation testing for blogs", () => {
     const response = await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlog, user: testUserId });
+      .send(newBlog);
     expect(response.status).toBe(400);
   });
   test("verify missing author results status code 400", async () => {
@@ -75,7 +67,7 @@ describe("validation testing for blogs", () => {
     const response = await api
       .post("/api/blogs")
       .set("authorization", `Bearer ${token}`)
-      .send({ ...newBlog, user: testUserId });
+      .send(newBlog);
     expect(response.status).toBe(400);
   });
 });
@@ -94,6 +86,25 @@ describe("GET request tests", () => {
     response.body.map((val) => {
       expect(val.id).toBeDefined();
     });
+  });
+});
+
+describe("PUT request tests", () => {
+  test("successfully gets updated", async () => {
+    await api
+      .put("/api/blogs/" + firstBlog)
+      .set("authorization", `Bearer ${token}`)
+      .send({
+        title: "this is updated blog",
+        author: "first update author",
+        url: "http://updatesite.com",
+        likes: "100001",
+      });
+    const afterUpdateResult = await blogsInDb();
+    expect(afterUpdateResult[0].title).toBe("this is updated blog");
+    expect(afterUpdateResult[0].author).toBe("first update author");
+    expect(afterUpdateResult[0].url).toBe("http://updatesite.com");
+    expect(afterUpdateResult[0].likes).toBe(100001);
   });
 });
 

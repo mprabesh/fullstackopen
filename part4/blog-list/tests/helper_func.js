@@ -4,7 +4,7 @@ const supertest = require("supertest");
 const app = require("../app");
 const api = supertest(app);
 const bcrypt = require("bcrypt");
-const { newUser } = require("./dummyTestData");
+const { newUser, newBlogPost3 } = require("./dummyTestData");
 
 const initialTestFunc = async () => {
   await User.deleteMany({});
@@ -15,13 +15,15 @@ const initialTestFunc = async () => {
     name: newUser.name,
     passwordHash,
   });
-  const testUser = await myUser.save();
-  let testUserId = testUser._id.toString();
+  const userSaved = await myUser.save();
   const result = await api
     .post("/api/login")
     .send({ username: newUser.username, password: newUser.password });
   let token = result.body.token;
-  return { token, testUserId };
+  const newBlog = new Blog({ ...newBlogPost3, user: userSaved._id.toString() });
+  const newBlogId = await newBlog.save();
+
+  return { token, newBlogId };
 };
 
 const blogsInDb = async () => {
