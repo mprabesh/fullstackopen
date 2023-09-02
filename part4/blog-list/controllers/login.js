@@ -11,7 +11,7 @@ loginRoute.post("/", async (req, res, next) => {
     const passwordCorrect =
       user === null ? false : await bcrypt.compare(password, user.passwordHash);
     if (!(passwordCorrect && user)) {
-      res.status(401).json({ error: "invalid user" });
+      res.status(401).json({ error: "wrong username or password" });
     }
     const tokenForUser = {
       username: user.username,
