@@ -1,7 +1,15 @@
-const LoginForm = ({ handleLogin, userCredentials, setuserCredentials }) => {
+import Notification from "./Notification";
+
+const LoginForm = ({
+  handleLogin,
+  userCredentials,
+  setuserCredentials,
+  notificationMessage,
+}) => {
   return (
     <div>
       <h2>login to application</h2>
+      <Notification notificationMessage={notificationMessage} />
       <form onSubmit={handleLogin}>
         username{" "}
         <input
