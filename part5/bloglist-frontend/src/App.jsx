@@ -3,6 +3,7 @@ import Blog from "./components/Blog";
 import BlogServices from "./services/blog";
 import LoginForm from "./components/LoginForm";
 import AddBlogForm from "./components/AddBlogForm";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -12,32 +13,89 @@ const App = () => {
     password: "",
   });
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
+
+  const [notificationMessage, setNotificationMessage] = useState({
+    message: "",
+    messageTypeError: false,
+  });
+
   useEffect(() => {
     BlogServices.getAll()
       .then((result) => setBlogs(result.data))
       .catch((err) => console.log(err));
     setuser(JSON.parse(window.localStorage.getItem("userData")));
   }, []);
+
   const handleLogin = (e) => {
     e.preventDefault();
     BlogServices.login(userCredentials)
       .then((result) => {
         setuser(result.data);
         window.localStorage.setItem("userData", JSON.stringify(result.data));
+        setNotificationMessage({
+          ...notificationMessage,
+          message: "Logged in successfully.",
+        });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
         setuserCredentials({
           username: "",
           password: "",
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setNotificationMessage({
+          message: err.response.data.error,
+          messageTypeError: true,
+        });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
+        setuserCredentials({
+          username: "",
+          password: "",
+        });
+      });
   };
 
   const addBlog = (e) => {
     e.preventDefault();
     BlogServices.addBlog(newBlog)
-      .then((result) => console.log(result))
-      .catch((err) => console.log(err));
+      .then((result) => {
+        setNotificationMessage({
+          ...notificationMessage,
+          message: `a new blog ${result.data.title} by ${result.data.author} added.`,
+        });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
+        setNewBlog({ title: "", author: "", url: "" });
+      })
+      .catch((err) => {
+        setNotificationMessage({
+          messageTypeError: true,
+          message: err.response.data.error,
+        });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
+        setNewBlog({ title: "", author: "", url: "" });
+      });
   };
+
   const logout = () => {
     setuser(null);
     window.localStorage.removeItem("userData");
@@ -50,10 +108,12 @@ const App = () => {
           handleLogin={handleLogin}
           userCredentials={userCredentials}
           setuserCredentials={setuserCredentials}
+          notificationMessage={notificationMessage}
         />
       ) : (
         <div>
           <h2>Blogs</h2>
+          <Notification notificationMessage={notificationMessage} />
           {user.name} logged in <button onClick={logout}>logout</button>
           <AddBlogForm
             addBlog={addBlog}
