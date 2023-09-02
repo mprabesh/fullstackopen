@@ -17,7 +17,7 @@ loginRoute.post("/", async (req, res, next) => {
       username: user.username,
       userId: user._id,
     };
-    const token = jwt.sign(tokenForUser, SECRET_KEY);
+    const token = jwt.sign(tokenForUser, SECRET_KEY, { expiresIn: "45m" });
     res.status(200).json({ username: user.username, name: user.name, token });
   } catch (err) {
     next(err);
