@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Blog from "./components/Blog";
 import BlogServices from "./services/blog";
 import LoginForm from "./components/LoginForm";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
+import Toggleable from "./components/Toggleable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -19,12 +20,14 @@ const App = () => {
     messageTypeError: false,
   });
 
+  const blogFormRef = useRef();
+
   useEffect(() => {
     BlogServices.getAll()
       .then((result) => setBlogs(result.data))
       .catch((err) => console.log(err));
     setuser(JSON.parse(window.localStorage.getItem("userData")));
-  }, []);
+  }, [blogs]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -34,7 +37,7 @@ const App = () => {
         window.localStorage.setItem("userData", JSON.stringify(result.data));
         setNotificationMessage({
           ...notificationMessage,
-          message: "Logged in successfully.",
+          message: "Welcome to blog app",
         });
         setTimeout(() => {
           setNotificationMessage({
@@ -67,8 +70,10 @@ const App = () => {
 
   const addBlog = (e) => {
     e.preventDefault();
+    blogFormRef.current.toggleVisibility();
     BlogServices.addBlog(newBlog)
       .then((result) => {
+        setBlogs([...blogs, newBlog]);
         setNotificationMessage({
           ...notificationMessage,
           message: `a new blog ${result.data.title} by ${result.data.author} added.`,
@@ -82,6 +87,9 @@ const App = () => {
         setNewBlog({ title: "", author: "", url: "" });
       })
       .catch((err) => {
+        if (err.response.data.error === "jwt expired") {
+          setuser(null);
+        }
         setNotificationMessage({
           messageTypeError: true,
           message: err.response.data.error,
@@ -115,11 +123,13 @@ const App = () => {
           <h2>Blogs</h2>
           <Notification notificationMessage={notificationMessage} />
           {user.name} logged in <button onClick={logout}>logout</button>
-          <AddBlogForm
-            addBlog={addBlog}
-            setNewBlog={setNewBlog}
-            newBlog={newBlog}
-          />
+          <Toggleable buttonLabel="add blog" ref={blogFormRef}>
+            <AddBlogForm
+              addBlog={addBlog}
+              setNewBlog={setNewBlog}
+              newBlog={newBlog}
+            />
+          </Toggleable>
           {blogs.map((blog) => (
             <Blog key={blog.id} blog={blog} />
           ))}
