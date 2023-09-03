@@ -17,4 +17,11 @@ export const addBlog = (newBlog) => {
   });
 };
 
-export default { getAll, login, addBlog };
+export const updateLike = (id, updateBlog) => {
+  const token = JSON.parse(window.localStorage.getItem("userData")).token;
+  return axios.put(`${baseUrl}/${id}`, updateBlog, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export default { getAll, login, addBlog, updateLike };

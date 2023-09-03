@@ -104,6 +104,28 @@ const App = () => {
       });
   };
 
+  const handleLikesUpdate = (blog) => {
+    BlogServices.updateLike(blog.id, {
+      ...blog,
+      likes: blog.likes + 1,
+      user: user.id,
+    })
+      .then(() => alert("Update success"))
+      .catch((err) => {
+        setuser(null);
+        setNotificationMessage({
+          messageTypeError: true,
+          message: err.response.data.error,
+        });
+        setTimeout(() => {
+          setNotificationMessage({
+            message: "",
+            messageTypeError: false,
+          });
+        }, 3000);
+      });
+  };
+
   const logout = () => {
     setuser(null);
     window.localStorage.removeItem("userData");
@@ -131,7 +153,11 @@ const App = () => {
             />
           </Toggleable>
           {blogs.map((blog) => (
-            <Blog key={blog.id} blog={blog} />
+            <Blog
+              key={blog.id}
+              blog={blog}
+              handleLikesUpdate={handleLikesUpdate}
+            />
           ))}
         </div>
       )}
