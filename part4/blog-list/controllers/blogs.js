@@ -69,17 +69,9 @@ blogRoute.delete(
 blogRoute.put("/:id", tokenExtractor, userExtractor, async (req, res, next) => {
   const myId = req.params.id;
   const myUpdatedObj = req.body;
-  const tokenUser = req.user;
   try {
-    const postAuthor = await Blog.findById(myId);
-    const updateAuthorized =
-      JSON.stringify(postAuthor.user) === JSON.stringify(tokenUser);
-    if (updateAuthorized) {
-      const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj);
-      res.status(200).json(response);
-    } else {
-      res.status(401).json({ error: "Unauthorized update" });
-    }
+    const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj);
+    res.status(200).json(response);
   } catch (err) {
     next(err);
   }
