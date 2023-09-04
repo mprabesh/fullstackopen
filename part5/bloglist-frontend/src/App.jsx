@@ -8,13 +8,13 @@ import Toggleable from "./components/Toggleable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
+  const [reload, setReload] = useState(true);
   const [user, setuser] = useState(null);
   const [userCredentials, setuserCredentials] = useState({
     username: "",
     password: "",
   });
   const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
-
   const [notificationMessage, setNotificationMessage] = useState({
     message: "",
     messageTypeError: false,
@@ -24,15 +24,18 @@ const App = () => {
 
   useEffect(() => {
     BlogServices.getAll()
-      .then((result) => setBlogs(result.data))
+      .then((result) => {
+        setBlogs(result.data);
+      })
       .catch((err) => console.log(err));
     setuser(JSON.parse(window.localStorage.getItem("userData")));
-  }, []);
+  }, [reload]);
 
   const handleLogin = (e) => {
     e.preventDefault();
     BlogServices.login(userCredentials)
       .then((result) => {
+        setReload(!reload);
         setuser(result.data);
         window.localStorage.setItem("userData", JSON.stringify(result.data));
         setNotificationMessage({
@@ -74,6 +77,7 @@ const App = () => {
     console.log(newBlog);
     BlogServices.addBlog(newBlog)
       .then((result) => {
+        setReload(!reload);
         console.log(result.data);
         setBlogs([...blogs, result.data]);
         setNotificationMessage({
@@ -112,7 +116,10 @@ const App = () => {
       likes: blog.likes + 1,
       user: user.id,
     })
-      .then(() => alert("Update success"))
+      .then(() => {
+        setReload(!reload);
+        blogs.map((val) => (val.id === blog.id ? val.likes + 1 : val));
+      })
       .catch((err) => {
         setuser(null);
         setNotificationMessage({
