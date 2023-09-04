@@ -72,7 +72,6 @@ const App = () => {
   const addBlog = (e) => {
     e.preventDefault();
     blogFormRef.current.toggleVisibility();
-    console.log(newBlog);
     BlogServices.addBlog(newBlog)
       .then((result) => {
         setBlogs([...blogs, result.data]);
@@ -91,6 +90,7 @@ const App = () => {
       .catch((err) => {
         if (err.response.data.error === "jwt expired") {
           setuser(null);
+          window.localStorage.removeItem("userData");
         }
         setNotificationMessage({
           messageTypeError: true,
@@ -122,7 +122,10 @@ const App = () => {
         );
       })
       .catch((err) => {
-        setuser(null);
+        if (err.response.data.error === "jwt expired") {
+          setuser(null);
+          window.localStorage.removeItem("userData");
+        }
         setNotificationMessage({
           messageTypeError: true,
           message: err.response.data.error,
@@ -143,7 +146,6 @@ const App = () => {
     if (confirmDelete) {
       BlogServices.deleteBlog(blog.id)
         .then((result) => {
-          console.log(result.data.id);
           setBlogs(blogs.filter((blog) => blog.id !== result.data.id));
           setNotificationMessage({
             ...notificationMessage,
@@ -157,6 +159,10 @@ const App = () => {
           }, 3000);
         })
         .catch((err) => {
+          if (err.response.data.error === "jwt expired") {
+            setuser(null);
+            window.localStorage.removeItem("userData");
+          }
           setNotificationMessage({
             messageTypeError: true,
             message: err.response.data.error,
