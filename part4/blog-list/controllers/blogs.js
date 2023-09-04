@@ -60,8 +60,8 @@ blogRoute.delete(
           .status(401)
           .json({ error: "Only the user who created the blog can delete it." });
       }
-      await Blog.findByIdAndDelete(myID);
-      res.status(200).send("Deletion successful.");
+      const result = await Blog.findByIdAndDelete(myID);
+      res.status(200).send(result);
     } catch (err) {
       next(err);
     }
@@ -72,7 +72,13 @@ blogRoute.put("/:id", tokenExtractor, userExtractor, async (req, res, next) => {
   const myId = req.params.id;
   const myUpdatedObj = req.body;
   try {
-    const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj);
+    const response = await Blog.findByIdAndUpdate(myId, myUpdatedObj).populate(
+      "user",
+      {
+        username: 1,
+        name: 1,
+      }
+    );
     res.status(200).json(response);
   } catch (err) {
     next(err);
