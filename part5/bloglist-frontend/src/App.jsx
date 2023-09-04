@@ -135,6 +135,40 @@ const App = () => {
       });
   };
 
+  const handleDelete = (blog) => {
+    const confirmDelete = window.confirm(
+      `Remove blog ${blog.title} by ${blog.author}`
+    );
+    if (confirmDelete) {
+      BlogServices.deleteBlog(blog.id)
+        .then(() => {
+          setReload(!reload);
+          setNotificationMessage({
+            ...notificationMessage,
+            message: "Deletion successful",
+          });
+          setTimeout(() => {
+            setNotificationMessage({
+              message: "",
+              messageTypeError: false,
+            });
+          }, 3000);
+        })
+        .catch((err) => {
+          setNotificationMessage({
+            messageTypeError: true,
+            message: err.response.data.error,
+          });
+          setTimeout(() => {
+            setNotificationMessage({
+              message: "",
+              messageTypeError: false,
+            });
+          }, 3000);
+        });
+    }
+  };
+
   const logout = () => {
     setuser(null);
     window.localStorage.removeItem("userData");
@@ -168,6 +202,7 @@ const App = () => {
                 key={blog.id}
                 blog={blog}
                 handleLikesUpdate={handleLikesUpdate}
+                handleDelete={handleDelete}
               />
             ))}
         </div>

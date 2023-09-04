@@ -24,4 +24,11 @@ export const updateLike = (id, updateBlog) => {
   });
 };
 
-export default { getAll, login, addBlog, updateLike };
+export const deleteBlog = (id) => {
+  const token = JSON.parse(window.localStorage.getItem("userData")).token;
+  return axios.delete(`${baseUrl}/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+};
+
+export default { getAll, login, addBlog, updateLike, deleteBlog };
