@@ -8,7 +8,6 @@ import Toggleable from "./components/Toggleable";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [reload, setReload] = useState(true);
   const [user, setuser] = useState(null);
   const [userCredentials, setuserCredentials] = useState({
     username: "",
@@ -29,13 +28,12 @@ const App = () => {
       })
       .catch((err) => console.log(err));
     setuser(JSON.parse(window.localStorage.getItem("userData")));
-  }, [reload]);
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
     BlogServices.login(userCredentials)
       .then((result) => {
-        setReload(!reload);
         setuser(result.data);
         window.localStorage.setItem("userData", JSON.stringify(result.data));
         setNotificationMessage({
@@ -77,8 +75,6 @@ const App = () => {
     console.log(newBlog);
     BlogServices.addBlog(newBlog)
       .then((result) => {
-        setReload(!reload);
-        console.log(result.data);
         setBlogs([...blogs, result.data]);
         setNotificationMessage({
           ...notificationMessage,
@@ -116,9 +112,14 @@ const App = () => {
       likes: blog.likes + 1,
       user: user.id,
     })
-      .then(() => {
-        setReload(!reload);
-        blogs.map((val) => (val.id === blog.id ? val.likes + 1 : val));
+      .then((result) => {
+        setBlogs(
+          blogs.map((val) =>
+            val.id === result.data.id
+              ? { ...val, likes: result.data.likes + 1 }
+              : val
+          )
+        );
       })
       .catch((err) => {
         setuser(null);
@@ -141,8 +142,9 @@ const App = () => {
     );
     if (confirmDelete) {
       BlogServices.deleteBlog(blog.id)
-        .then(() => {
-          setReload(!reload);
+        .then((result) => {
+          console.log(result.data.id);
+          setBlogs(blogs.filter((blog) => blog.id !== result.data.id));
           setNotificationMessage({
             ...notificationMessage,
             message: "Deletion successful",
