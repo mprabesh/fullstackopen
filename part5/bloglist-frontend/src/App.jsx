@@ -27,7 +27,7 @@ const App = () => {
       .then((result) => setBlogs(result.data))
       .catch((err) => console.log(err));
     setuser(JSON.parse(window.localStorage.getItem("userData")));
-  }, [blogs]);
+  }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -71,9 +71,11 @@ const App = () => {
   const addBlog = (e) => {
     e.preventDefault();
     blogFormRef.current.toggleVisibility();
+    console.log(newBlog);
     BlogServices.addBlog(newBlog)
       .then((result) => {
-        setBlogs([...blogs, newBlog]);
+        console.log(result.data);
+        setBlogs([...blogs, result.data]);
         setNotificationMessage({
           ...notificationMessage,
           message: `a new blog ${result.data.title} by ${result.data.author} added.`,

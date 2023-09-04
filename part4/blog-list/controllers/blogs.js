@@ -32,11 +32,13 @@ blogRoute.post("/", tokenExtractor, userExtractor, async (req, res, next) => {
   }
   try {
     const userFromDb = await User.findById(tokenUser);
-
     const newBlog = new Blog({ ...req.body, user: tokenUser });
-
     const result = await newBlog.save();
-    res.status(200).json(result);
+    const addedBlog = await Blog.findById(result._id).populate("user", {
+      username: 1,
+      name: 1,
+    });
+    res.status(200).json(addedBlog);
     userFromDb.blogs = userFromDb.blogs.concat(result.id);
     await userFromDb.save();
   } catch (err) {
