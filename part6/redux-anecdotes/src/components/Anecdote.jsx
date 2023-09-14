@@ -1,9 +1,11 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Filter from "./Filter";
+import { addVote } from "../reducers/anecdoteReducer";
 
 export default function Anecdote() {
   const anecdotes = useSelector((state) => {
+    state = JSON.parse(JSON.stringify(state));
     return state.anecdote.sort((val1, val2) => {
       return val2.votes - val1.votes;
     });
@@ -17,7 +19,7 @@ export default function Anecdote() {
     : anecdotes;
 
   const vote = (id) => {
-    dispatch({ type: "ADD_VOTE", payload: id });
+    dispatch(addVote(id));
   };
   return (
     <div>

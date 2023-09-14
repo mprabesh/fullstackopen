@@ -1,10 +1,11 @@
 import { useDispatch } from "react-redux";
+import { filterAnecdote } from "../reducers/filterReducer";
 
 const Filter = () => {
   const dispatch = useDispatch();
   const handleChange = (event) => {
     const searchVal = event.target.value;
-    dispatch({ type: "FILTER_ANECDOTE", payload: searchVal });
+    dispatch(filterAnecdote(searchVal));
   };
   const style = {
     marginBottom: 10,
