@@ -1,13 +1,20 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Filter from "./Filter";
 
 export default function Anecdote() {
   const anecdotes = useSelector((state) => {
-    return state.sort((val1, val2) => {
+    return state.anecdote.sort((val1, val2) => {
       return val2.votes - val1.votes;
     });
   });
   const dispatch = useDispatch();
+  const filterQuery = useSelector((state) => state.filter);
+  const anecdotesToShow = filterQuery
+    ? anecdotes.filter((val) =>
+        val.content.toLowerCase().includes(filterQuery.toLowerCase())
+      )
+    : anecdotes;
 
   const vote = (id) => {
     dispatch({ type: "ADD_VOTE", payload: id });
@@ -15,7 +22,8 @@ export default function Anecdote() {
   return (
     <div>
       <h2>Anecdotes</h2>
-      {anecdotes.map((anecdote) => (
+      <Filter />
+      {anecdotesToShow.map((anecdote) => (
         <div key={anecdote.id}>
           <div>{anecdote.content}</div>
           <div>
