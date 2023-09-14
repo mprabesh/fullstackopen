@@ -19,7 +19,8 @@ const asObject = (anecdote) => {
   };
 };
 
-const initialState = anecdotesAtStart.map(asObject);
+// const initialState = anecdotesAtStart.map(asObject);
+const initialState = [];
 
 const anecdoteSlice = createSlice({
   name: "filterAnecdote",

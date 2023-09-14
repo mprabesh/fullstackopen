@@ -8,6 +8,7 @@ import {
 
 export default function AnecdoteForm() {
   const dispatch = useDispatch();
+
   const addAnecdote = (e) => {
     e.preventDefault();
     const newAnecdote = e.target.newVal.value;
@@ -16,6 +17,7 @@ export default function AnecdoteForm() {
     dispatch(addNotification(`You added "${newAnecdote}"`));
     setTimeout(() => dispatch(removeNotificaton()), 4000);
   };
+
   return (
     <div>
       <h2>create new</h2>
