@@ -6,6 +6,7 @@ import App from "./App";
 import anecdoteReducer from "./reducers/anecdoteReducer";
 import filterReducer from "./reducers/filterReducer";
 import notificationReducer from "./reducers/notificationReducer";
+// import { getAll } from "./services/anecdotes";
 
 const store = configureStore({
   reducer: {
@@ -14,6 +15,12 @@ const store = configureStore({
     notification: notificationReducer,
   },
 });
+
+// getAll().then((anecdotes) =>
+//   anecdotes.forEach((val) => {
+//     store.dispatch(appendAnecdote(val));
+//   })
+// );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Provider store={store}>
