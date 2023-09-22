@@ -10,7 +10,7 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
     marginBottom: 5,
   };
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="a_blog">
       {blog.title} {blog.author}
       <button onClick={() => setView(!view)}>{view ? "hide" : "view"}</button>
       <br />

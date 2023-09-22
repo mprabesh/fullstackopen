@@ -13,7 +13,6 @@ const App = () => {
     username: "",
     password: "",
   });
-  const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" });
   const [notificationMessage, setNotificationMessage] = useState({
     message: "",
     messageTypeError: false,
@@ -69,8 +68,7 @@ const App = () => {
       });
   };
 
-  const addBlog = (e) => {
-    e.preventDefault();
+  const createBlog = (newBlog) => {
     blogFormRef.current.toggleVisibility();
     BlogServices.addBlog(newBlog)
       .then((result) => {
@@ -85,7 +83,6 @@ const App = () => {
             messageTypeError: false,
           });
         }, 3000);
-        setNewBlog({ title: "", author: "", url: "" });
       })
       .catch((err) => {
         if (err.response.data.error === "jwt expired") {
@@ -102,7 +99,6 @@ const App = () => {
             messageTypeError: false,
           });
         }, 3000);
-        setNewBlog({ title: "", author: "", url: "" });
       });
   };
 
@@ -197,11 +193,7 @@ const App = () => {
           <Notification notificationMessage={notificationMessage} />
           {user.name} logged in <button onClick={logout}>logout</button>
           <Toggleable buttonLabel="add blog" ref={blogFormRef}>
-            <AddBlogForm
-              addBlog={addBlog}
-              setNewBlog={setNewBlog}
-              newBlog={newBlog}
-            />
+            <AddBlogForm createBlog={createBlog} />
           </Toggleable>
           {blogs
             .sort((val1, val2) => val2.likes - val1.likes)
