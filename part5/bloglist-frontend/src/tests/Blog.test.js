@@ -4,15 +4,17 @@ import { userEvent } from "@testing-library/user-event";
 import Blog from "../components/Blog";
 import AddBlogForm from "../components/AddBlogForm";
 
+const blog = {
+  id: 12345,
+  title: "7 wonders of the world",
+  author: "Alex Romanov",
+  url: "https://worldheritage.com/",
+  likes: 99,
+  user: { name: "Prabesh Magar" },
+};
+
 describe("Blog App tests", () => {
   test("component displaying a blog renders the blog's title and author, but does not render its URL or number of likes by default", () => {
-    const blog = {
-      id: 12345,
-      title: "7 wonders of the world",
-      author: "Alex Romanov",
-      url: "https://www.simplify.com",
-      likes: 99,
-    };
     const { container } = render(<Blog blog={blog} />);
     const div = container.querySelector(".a_blog");
     const element = screen.queryByText("likes");
@@ -22,14 +24,6 @@ describe("Blog App tests", () => {
   });
 
   test("the blog's URL and number of likes are shown when the button controlling the shown details has been clicked", async () => {
-    const blog = {
-      id: 12345,
-      title: "7 wonders of the world",
-      author: "Alex Romanov",
-      url: "https://worldheritage.com/",
-      likes: 99,
-      user: { name: "Prabesh Magar" },
-    };
     const container = render(<Blog blog={blog} />).container;
     const user = userEvent.setup();
     const button = screen.getByText("view");
@@ -38,16 +32,8 @@ describe("Blog App tests", () => {
     expect(div).toHaveTextContent("https://worldheritage.com/");
     expect(div).toHaveTextContent("99");
   });
-  test("if the like button is clicked twice, the event handler the component received as props is called twice.", async () => {
-    const blog = {
-      id: 12345,
-      title: "7 wonders of the world",
-      author: "Alex Romanov",
-      url: "https://worldheritage.com/",
-      likes: 99,
-      user: { name: "Prabesh Magar" },
-    };
 
+  test("if the like button is clicked twice, the event handler the component received as props is called twice.", async () => {
     const mockFunction = jest.fn();
     render(<Blog blog={blog} handleLikesUpdate={mockFunction} />);
     const user = userEvent.setup();
