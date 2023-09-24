@@ -15,7 +15,7 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
       <button onClick={() => setView(!view)}>{view ? "hide" : "view"}</button>
       <br />
       {view ? (
-        <div>
+        <div className="blog-info">
           {blog.url}
           <br />
           likes {blog.likes}{" "}
