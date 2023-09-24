@@ -2,7 +2,7 @@ const Notification = ({ notificationMessage }) => {
   const notifyMessage = notificationMessage;
   setTimeout(() => {
     notifyMessage.message = "";
-  }, 3000);
+  }, 5000);
   return notifyMessage.message ? (
     <div
       className={

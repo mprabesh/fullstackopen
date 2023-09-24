@@ -13,19 +13,25 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
   return (
     <div style={blogStyle} className="a_blog">
       {blog.title} {blog.author}
-      <button onClick={() => setView(!view)}>{view ? "hide" : "view"}</button>
+      <button className="view-btn" onClick={() => setView(!view)}>
+        {view ? "hide" : "view"}
+      </button>
       <br />
       {view ? (
         <div className="blog-info">
           {blog.url}
           <br />
           likes {blog.likes}{" "}
-          <button onClick={() => handleLikesUpdate(blog)}>like</button>
+          <button className="like-btn" onClick={() => handleLikesUpdate(blog)}>
+            like
+          </button>
           <br />
           {blog.user.name}
           <br />
           {blog.user.username === currUser ? (
-            <button onClick={() => handleDelete(blog)}>remove</button>
+            <button id="remove-btn" onClick={() => handleDelete(blog)}>
+              remove
+            </button>
           ) : null}
         </div>
       ) : null}
