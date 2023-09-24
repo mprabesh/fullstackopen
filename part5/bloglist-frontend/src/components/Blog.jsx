@@ -9,6 +9,7 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
     borderWidth: 1,
     marginBottom: 5,
   };
+  const currUser = JSON.parse(localStorage.getItem("userData")).username;
   return (
     <div style={blogStyle} className="a_blog">
       {blog.title} {blog.author}
@@ -23,7 +24,9 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
           <br />
           {blog.user.name}
           <br />
-          <button onClick={() => handleDelete(blog)}>remove</button>
+          {blog.user.username === currUser ? (
+            <button onClick={() => handleDelete(blog)}>remove</button>
+          ) : null}
         </div>
       ) : null}
     </div>
