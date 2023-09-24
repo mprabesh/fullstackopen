@@ -35,5 +35,30 @@ describe("Blog app", function () {
       cy.get(".redClassMessage").should("have.css", "color", "rgb(255, 0, 0)");
       cy.get(".redClassMessage").should("have.css", "border-style", "solid");
     });
+    describe("When logged in", function () {
+      beforeEach(function () {
+        cy.login({ username: "alex123", password: "password" });
+      });
+      it("add new blog", function () {
+        cy.contains("add blog").click();
+        cy.get("#author").type("Jasprit Sangha");
+        cy.get("#title").type("Indian culture in the west");
+        cy.get("#url").type("http://www.exchangeculture.com");
+        cy.contains("Create").click();
+        cy.get(".a_blog").should("contain", "Indian culture in the west");
+      });
+      it("users can like a blog", function () {
+        cy.addBlog({
+          author: "Jasprit Sangha",
+          url: "http://www.exchangeculture.com",
+          title: "Indian culture in the west",
+          likes: 99,
+        });
+        cy.contains("view").click();
+        cy.get(".blog-info").should("contain", 99);
+        cy.contains("like").click();
+        cy.get(".blog-info").should("contain", 100);
+      });
+    });
   });
 });
