@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
+const Blog = ({ blog, handleLikesUpdate, handleDelete, currUser }) => {
   const [view, setView] = useState(false);
   const blogStyle = {
     paddingTop: 10,
@@ -9,7 +9,6 @@ const Blog = ({ blog, handleLikesUpdate, handleDelete }) => {
     borderWidth: 1,
     marginBottom: 5,
   };
-  const currUser = JSON.parse(localStorage.getItem("userData")).username;
   return (
     <div style={blogStyle} className="a_blog">
       {blog.title} {blog.author}

@@ -22,7 +22,6 @@ describe("Blog App tests", () => {
     expect(element).toBeNull();
     expect(screen.queryByText("url")).toBeNull();
   });
-
   test("the blog's URL and number of likes are shown when the button controlling the shown details has been clicked", async () => {
     const container = render(<Blog blog={blog} />).container;
     const user = userEvent.setup();
@@ -32,7 +31,6 @@ describe("Blog App tests", () => {
     expect(div).toHaveTextContent("https://worldheritage.com/");
     expect(div).toHaveTextContent("99");
   });
-
   test("if the like button is clicked twice, the event handler the component received as props is called twice.", async () => {
     const mockFunction = jest.fn();
     render(<Blog blog={blog} handleLikesUpdate={mockFunction} />);
