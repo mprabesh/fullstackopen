@@ -177,9 +177,6 @@ const App = () => {
     setuser(null);
     window.localStorage.removeItem("userData");
   };
-
-  const currUser = JSON.parse(localStorage.getItem("userData")).username;
-
   return (
     <div>
       {user === null ? (
@@ -206,7 +203,9 @@ const App = () => {
                   blog={blog}
                   handleLikesUpdate={handleLikesUpdate}
                   handleDelete={handleDelete}
-                  currUser={currUser}
+                  currUser={
+                    JSON.parse(localStorage.getItem("userData")).username
+                  }
                 />
               ))}
           </div>
