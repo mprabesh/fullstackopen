@@ -1,8 +1,1 @@
-<h1> Fullstack Open</h1>
-<h4>For Part2 PhoneBook App</h4>
-<p>
-<ul>
-<li>npm run server</li>
-<li>npm run dev</li>
-</ul>
-</p>
+<h1>FULLSTACK Chapter1 to Chapter7 repo</h1>
