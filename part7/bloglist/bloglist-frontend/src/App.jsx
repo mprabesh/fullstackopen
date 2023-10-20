@@ -5,6 +5,8 @@ import LoginForm from "./components/LoginForm";
 import AddBlogForm from "./components/AddBlogForm";
 import Notification from "./components/Notification";
 import Toggleable from "./components/Toggleable";
+import { useDispatch } from "react-redux";
+import { displayNotification } from "./reducers/notificationReducer";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -19,6 +21,8 @@ const App = () => {
   });
 
   const blogFormRef = useRef();
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     BlogServices.getAll()
@@ -35,16 +39,18 @@ const App = () => {
       .then((result) => {
         setuser(result.data);
         window.localStorage.setItem("userData", JSON.stringify(result.data));
-        setNotificationMessage({
-          ...notificationMessage,
-          message: "Welcome to blog app",
-        });
-        setTimeout(() => {
-          setNotificationMessage({
-            message: "",
-            messageTypeError: false,
-          });
-        }, 3000);
+
+        dispatch(displayNotification("Welcome to blog app"));
+        // setNotificationMessage({
+        //   ...notificationMessage,
+        //   message: "Welcome to blog app",
+        // });
+        // setTimeout(() => {
+        //   setNotificationMessage({
+        //     message: "",
+        //     messageTypeError: false,
+        //   });
+        // }, 3000);
         setuserCredentials({
           username: "",
           password: "",
