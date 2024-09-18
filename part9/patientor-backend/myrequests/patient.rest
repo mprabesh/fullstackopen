@@ -1,0 +1,13 @@
+POST http://localhost:3001/api/patients
+content-type:application/json
+
+{
+    "name":"Sirish Tamang",
+    "dateOfBirth":"2002-11-09",
+    "gender":"male",
+    "occupation":"student",
+    "ssn":"this is ssn"
+}
+
+###
+GET http://localhost:3001/api/patients
